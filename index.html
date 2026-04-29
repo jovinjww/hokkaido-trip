@@ -1,24 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>北海道快閃四日遊</title>
+
+<style>
+body{font-family:sans-serif;margin:0;background:#f3f8ff}
+header{background:linear-gradient(135deg,#7AA2E3,#FFB1B1);color:#fff;padding:25px;text-align:center}
+.card{background:#fff;margin:15px;border-radius:12px;padding:12px}
+.card-header{font-weight:bold;cursor:pointer}
+.card-content{display:none;margin-top:8px}
+.card.active .card-content{display:block}
+.alert{margin:15px;padding:12px;border:2px solid red;border-radius:10px}
+.qr{text-align:center;margin:20px}
+</style>
+
+</head>
+
 <body>
 
 <header>
-  <h1>北海道快閃四日遊</h1>
-  <p>2026/05/17 - 05/20</p>
+<h1>北海道快閃四日遊</h1>
+<p>2026/05/17 - 05/20</p>
 </header>
 
 <div class="alert">
-  ⏰ 07:30 集合
-  <button onclick="enableNotify()">🔔 開啟提醒</button>
+⏰ 07:30 集合 
+<button onclick="notify()">🔔提醒</button>
 </div>
-
-<div class="weather" id="weather"></div>
 
 <div id="days"></div>
 
-<!-- QR Code -->
-<div class="qr-box">
-  <canvas id="qr"></canvas>
-  <p>📲 掃描分享給同事</p>
+<div class="qr">
+<canvas id="qr"></canvas>
+<p>掃描分享</p>
 </div>
 
-<script src="app.js"></script>
+<script>
+// 行程資料
+const data=[
+{t:"Day1 溫泉",d:"登別溫泉 → 螃蟹吃到飽",m:"登別溫泉"},
+{t:"Day2 地獄谷",d:"地獄谷 → 支笏湖",m:"登別地獄谷"},
+{t:"Day3 小樽",d:"小樽運河 → 狸小路",m:"小樽運河"},
+{t:"Day4 回程",d:"Outlet → 回台灣",m:"三井Outlet 北廣島"}
+];
+
+// 建立卡片
+const root=document.getElementById("days");
+data.forEach(x=>{
+let el=document.createElement("div");
+el.className="card";
+el.innerHTML=`
+<div class="card-header">${x.t}</div>
+<div class="card-content">
+${x.d}<br>
+<a href="https://www.google.com/maps/search/${x.m}" target="_blank">📍導航</a>
+</div>`;
+root.appendChild(el);
+});
+
+// 點擊展開
+document.addEventListener("click",e=>{
+let h=e.target.closest(".card-header");
+if(!h)return;
+h.parentElement.classList.toggle("active");
+});
+
+// 通知
+function notify(){
+if(Notification.permission==="granted"){
+new Notification("明天記得出發！");
+}else{
+Notification.requestPermission();
+}
+}
+
+// QR code（超簡單版）
+let c=document.getElementById("qr");
+let ctx=c.getContext("2d");
+c.width=120;c.height=120;
+ctx.fillStyle="#000";
+ctx.fillRect(10,10,100,100);
+</script>
+
 </body>
+</html>
